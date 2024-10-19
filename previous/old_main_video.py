@@ -1,6 +1,6 @@
 import cv2
 import os
-from simple_facerec import SimpleFacerec
+from old_simple_facerec import SimpleFacerec
 
 import face_recognition
 
