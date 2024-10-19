@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import threading
 
 # Set the GPIO mode
 GPIO.setmode(GPIO.BCM)
@@ -8,20 +9,45 @@ GPIO.setmode(GPIO.BCM)
 PIR_PIN = 17
 GPIO.setup(PIR_PIN, GPIO.IN)
 
-print("Motion Sensor Initialized")
-print("Press Ctrl+C to exit")
+# Variable to store motion detection status
+motion_detected = False
 
+def motion_sensor():
+    global motion_detected
+    print("Motion Sensor Initialized")
+    print("Press Ctrl+C to exit")
+
+    try:
+        while True:
+            if GPIO.input(PIR_PIN):
+                motion_detected = True
+                print("Motion Detected!")
+                time.sleep(1)  # Delay to avoid multiple triggers
+            else:
+                motion_detected = False
+                time.sleep(1)
+
+    except KeyboardInterrupt:
+        print("Exiting program")
+    finally:
+        GPIO.cleanup()
+
+# Create and start the motion sensor thread
+motion_thread = threading.Thread(target=motion_sensor)
+motion_thread.start()
+
+# Main program loop
 try:
     while True:
-        if GPIO.input(PIR_PIN):
-            print("Motion Detected!")
-            time.sleep(1)  # Delay to avoid multiple triggers
-        else:
-            print("No Motion")
-            time.sleep(1)
+        if motion_detected:
+            # Handle motion detected event
+            print("Handling motion event...")
+            # You can add any additional processing here
+            time.sleep(1)  # Optional delay to avoid handling too fast
 
 except KeyboardInterrupt:
-    print("Exiting program")
+    print("Stopping the motion sensor thread...")
 
-finally:
-    GPIO.cleanup()
+# Cleanup
+motion_thread.join()  # Wait for the thread to finish
+GPIO.cleanup()
