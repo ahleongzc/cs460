@@ -9,7 +9,6 @@ from led_control import set_led_off, set_led_on, setup_led
 import time
 
 # Setup the sensors and devices
-setup_motion_sensor()
 setup_led()
 LIGHT_THRESHOLD = 100  # Set your light threshold (in Lux)
 
