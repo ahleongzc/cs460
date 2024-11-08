@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import threading
-
+import paho.mqtt.publish as publish
 # Set the GPIO mode
 GPIO.setmode(GPIO.BCM)
 
@@ -22,6 +22,7 @@ def motion_sensor():
             if GPIO.input(PIR_PIN):
                 motion_detected = True
                 print("Motion Detected!")
+                publish.single("g1g5.homeshield.levis.shopee", "motion", hostname="broker.hivemq.com") 
                 time.sleep(1)  # Delay to avoid multiple triggers
             else:
                 motion_detected = False
