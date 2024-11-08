@@ -28,6 +28,7 @@ import time
 import datetime
 
 mqttc = None
+counter = 0
 
 def start_publisher_thread():
     global mqttc
