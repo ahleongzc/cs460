@@ -3,8 +3,8 @@ import time
 
 # I2C pins and device address
 SDA_PIN = 24
-SCL_PIN = 25
-DEVICE_ADDRESS = 0x23  # BH1750 address
+SDA_PIN = 2 # SDA pin for I²C
+SCL_PIN = 3  # SCL pin for I²C
 
 def read_light():
     """Read the light level from the BH1750 light sensor."""
