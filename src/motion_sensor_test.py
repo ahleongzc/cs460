@@ -3,9 +3,9 @@ import time
 import threading
 import paho.mqtt.publish as publish
 
-from src.motion_sensor import setup_motion_sensor, cleanup_motion_sensor, get_motion_status, reset_motion_status
-from src.light_sensor import read_light
-from src.led_control import set_led_off, set_led_on, setup_led
+from motion_sensor import setup_motion_sensor, cleanup_motion_sensor, get_motion_status, reset_motion_status
+from light_sensor import read_light
+from led_control import set_led_off, set_led_on, setup_led
 import time
 
 # Setup the sensors and devices
@@ -67,13 +67,12 @@ try:
                     print("Light is sufficient, LED stays off.")
                     set_led_off()  # Ensure the LED is off if light is sufficient
 
-                time.sleep(10)  # Keep the LED on for 10 seconds if light is dim
-
-
+            time.sleep(5)  # Keep the LED on for 10 seconds if light is dim
+            set_led_off()
 
             motion_detected = False
             # You can add any additional processing here
-            time.sleep(5)  # Optional delay to avoid handling too fast
+            time.sleep(2)  # Optional delay to avoid handling too fast
 
 except KeyboardInterrupt:
     print("Stopping the motion sensor thread...")
