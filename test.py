@@ -49,10 +49,10 @@ def motion_sensor():
         while True:
             if GPIO.input(PIR_PIN):
                 motion_detected = True
-                time.sleep(1)  # Delay to avoid multiple triggers
+                #time.sleep(1)  # Delay to avoid multiple triggers
             else:
                 motion_detected = False
-                time.sleep(1)
+                #time.sleep(1)
 
     except KeyboardInterrupt:
         print("Exiting program")
@@ -68,16 +68,16 @@ try:
     while True:
         if motion_detected:
             # Handle motion detected event
-            print("Motion Detected!")
+            #print("Motion Detected!")
             motion_detected = False
             counter += 1
-            print(f"the counter is {counter} at {datetime.datetime.now()}")
-            if counter == 10:
+            #print(f"the counter is {counter} at {datetime.datetime.now()}")
+            if counter == 300:
                 mqttc.publish("g1g5.homeshield.levis.shopee", "motion", qos=1)
-                print("Reset") 
+               # print("Reset") 
                 counter = 0
             # You can add any additional processing here
-            time.sleep(5)  # Optional delay to avoid handling too fast
+            #time.sleep(1)  # Optional delay to avoid handling too fast
 
 except KeyboardInterrupt:
     print("Stopping the motion sensor thread...")
