@@ -5,8 +5,8 @@ import time
 
 # GPIO pin configuration
 ADO_PIN = 23  # ADO pin for the light sensor
-SDA_PIN = 24  # SDA pin for I²C
-SCL_PIN = 25  # SCL pin for I²C
+SDA_PIN = 2 # SDA pin for I²C
+SCL_PIN = 3  # SCL pin for I²C
 
 # Set up GPIO
 GPIO.setmode(GPIO.BCM)
