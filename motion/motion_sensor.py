@@ -43,8 +43,9 @@ try:
         if motion_detected:
             # Handle motion detected event
             print("Handling motion event...")
+            motion_detected = False
             # You can add any additional processing here
-            time.sleep(1)  # Optional delay to avoid handling too fast
+            time.sleep(5)  # Optional delay to avoid handling too fast
 
 except KeyboardInterrupt:
     print("Stopping the motion sensor thread...")
