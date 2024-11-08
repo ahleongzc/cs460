@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import threading
 import time
+import datetime
 
 mqttc = None
 
@@ -70,8 +71,10 @@ try:
             print("Motion Detected!")
             motion_detected = False
             counter += 1
+            print(f"the counter is {counter} at {datetime.datetime.now()}")
             if counter == 10:
                 mqttc.publish("g1g5.homeshield.levis.shopee", "motion", qos=1)
+                print("Reset") 
                 counter = 0
             # You can add any additional processing here
             time.sleep(5)  # Optional delay to avoid handling too fast
