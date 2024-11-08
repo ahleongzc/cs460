@@ -1,34 +1,19 @@
 import cv2
-from picamera2 import Picamera2
 import time
+import paho.mqtt.client as mqtt
 
-def capture_photo():
-    # Initialize Picamera2
-    picam2 = Picamera2()
-    
-    # Configure the camera
-    picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (640, 480)}))
-    picam2.start()
-    
-    # Allow the camera to warm up
-    time.sleep(2)
-    
-    # Capture the image using OpenCV
-    frame = picam2.capture_array()
-    
-    # Show the image using OpenCV
-    cv2.imshow('Captured Image', frame)
-    
-    # Save the image
-    cv2.imwrite('captured_image.jpg', frame)
-    print("Image saved as captured_image.jpg")
-    
-    # Wait for a key press and close the window
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    
-    # Stop the camera
-    picam2.stop()
+def on_publish(client, userdata, mid, reason_code, properties):
+    # reason_code and properties will only be present in MQTTv5. It's always unset in MQTTv3
+    try:
+        print("wow")
+        userdata.remove(mid)
+    except KeyError:
+        print("but remember that mid could be re-used !")
 
-if __name__ == "__main__":
-    capture_photo()
+unacked_publish = set()
+mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+mqttc.on_publish = on_publish
+
+mqttc.user_data_set(unacked_publish)
+mqttc.connect("broker.hivemq.com")
+mqttc.loop_start()
