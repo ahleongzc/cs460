@@ -69,15 +69,15 @@ try:
         if motion_detected:
             # Handle motion detected event
             #print("Motion Detected!")
-            motion_detected = False
             counter += 1
             #print(f"the counter is {counter} at {datetime.datetime.now()}")
-            if counter == 300:
+            if counter == 100:
                 mqttc.publish("g1g5.homeshield.levis.shopee", "motion", qos=1)
+                motion_detected = False
                # print("Reset") 
                 counter = 0
             # You can add any additional processing here
-            #time.sleep(1)  # Optional delay to avoid handling too fast
+            time.sleep(30)  # Optional delay to avoid handling too fast
 
 except KeyboardInterrupt:
     print("Stopping the motion sensor thread...")
