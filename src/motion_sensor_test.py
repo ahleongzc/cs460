@@ -99,7 +99,7 @@ try:
 
                 motion_detected = False
                 
-                for i in range(10):
+                for i in range(5):
                     print(f"the time left for next motion to be detected is {i}")
                     time.sleep(i)
                 # You can add any additional processing here
