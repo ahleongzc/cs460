@@ -1,0 +1,1086 @@
+[
+    {
+        "id": "ff75dcc53d7ce5f3",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1a0819c934d0ad24",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Intruder message",
+        "func": "msg.payload = { \n    \"chatId\": 5543128613, \n    \"type\": \"message\", \n    \"content\": \"🚨🚨🚨 INTRUDER ALERT 🚨🚨🚨\\nWe will sound off the alarm in 1 minute!!!\\nEnter /cancel to disable the alarm\", \n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 640,
+        "wires": [
+            [
+                "619f3f1c4247a03d"
+            ]
+        ]
+    },
+    {
+        "id": "619f3f1c4247a03d",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1000,
+        "y": 640,
+        "wires": [
+            [
+                "1e23509422d373d9"
+            ]
+        ]
+    },
+    {
+        "id": "88357def4c5c0348",
+        "type": "http in",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "url": "/intruder",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 500,
+        "y": 640,
+        "wires": [
+            [
+                "d464daa76793ded8",
+                "1a0819c934d0ad24"
+            ]
+        ]
+    },
+    {
+        "id": "d464daa76793ded8",
+        "type": "http response",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 740,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "e3854bd11f14b61d",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Send photo",
+        "func": "const image_buffer = msg.payload;\n\nmsg.payload = { \n    \"chatId\": 5543128613, \n    \"type\": \"photo\", \n    \"content\": image_buffer\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1430,
+        "y": 640,
+        "wires": [
+            [
+                "debfb5ed7055b259"
+            ]
+        ]
+    },
+    {
+        "id": "debfb5ed7055b259",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1640,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1e23509422d373d9",
+        "type": "file in",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Read from path",
+        "filename": "/Users/leongzhecheng/Documents/CS460 Foundations of CPS/facerec/image.jpg",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 1220,
+        "y": 640,
+        "wires": [
+            [
+                "e3854bd11f14b61d"
+            ]
+        ]
+    },
+    {
+        "id": "459ca67c9d164442",
+        "type": "telegram receiver",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 500,
+        "y": 1660,
+        "wires": [
+            [
+                "030653e40f7fe227",
+                "c3d1987c97a5be3b",
+                "a4b359f866c0bca4",
+                "8099eb9dd7bc55ef",
+                "1cf76c2543c0d213",
+                "07faeb67ce4b1ab4",
+                "31ad87ed84c16df8",
+                "e44f6b8e050b8611",
+                "5ed2b2b98c831230",
+                "c2dd0a75afe41d84",
+                "2a05fc39584a4d0b"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "030653e40f7fe227",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Start video process",
+        "func": "const command = msg.payload.content;\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (command != \"/start\") return;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 1300,
+        "wires": [
+            [
+                "57f482adc68dfaf0"
+            ]
+        ]
+    },
+    {
+        "id": "c3d1987c97a5be3b",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Stop video process",
+        "func": "const command = msg.payload.content;\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (command != \"/stop\") return;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 1380,
+        "wires": [
+            [
+                "c53b18e3d24ead6d"
+            ]
+        ]
+    },
+    {
+        "id": "57f482adc68dfaf0",
+        "type": "http request",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Start process",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:30000/start_process",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1000,
+        "y": 1300,
+        "wires": [
+            [
+                "6079099410200a77"
+            ]
+        ]
+    },
+    {
+        "id": "c53b18e3d24ead6d",
+        "type": "http request",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Stop process",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:30000/stop_process",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1000,
+        "y": 1380,
+        "wires": [
+            [
+                "6079099410200a77"
+            ]
+        ]
+    },
+    {
+        "id": "6079099410200a77",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Format message",
+        "func": "const response = JSON.parse(msg.payload);\n\nmsg.payload = {\n    \"chatId\": 5543128613,\n    \"type\": \"message\",\n    \"content\": response.message,\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1330,
+        "y": 1640,
+        "wires": [
+            [
+                "f0fb06c1dc973da3"
+            ]
+        ]
+    },
+    {
+        "id": "f0fb06c1dc973da3",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1540,
+        "y": 1640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a4b359f866c0bca4",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Everything else",
+        "func": "const command = msg.payload.content;\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\n\nif (command == \"/start\"\n    || command == \"/stop\"\n    || command == \"/restart\"\n    || command == \"/list_faces\"\n    || command == \"/list_new_faces\"\n    || command == \"/status\"\n    || command.includes(\"/delete\")\n    || command == \"/cancel\"\n    || command == \"/generate_qr\"\n) return;\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 2460,
+        "wires": [
+            [
+                "c9ea4203d1c9a2a9"
+            ]
+        ]
+    },
+    {
+        "id": "c9ea4203d1c9a2a9",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Format message",
+        "func": "msg.payload = {\n    \"chatId\": 5543128613,\n    \"type\": \"message\",\n    \"content\":\n`\n🛡️ Welcome to CS460 G1G5 Home Shield App 🛡️\n\nThe commands available are:\n\n1. /start to start Home Shield\n2. /stop to stop Home Shield\n3. /list_faces to see the names of registered faces\n4. /list_new_faces to see the names of unregistered faces (new upload)\n5. /delete <name> to delete a registered face\n6. /status to see how long Home Shield has been running\n7. /restart to restart the facial recognition process\n8. /generate_qr to share a QR code\n`\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 2460,
+        "wires": [
+            [
+                "76d0e999d583fceb"
+            ]
+        ]
+    },
+    {
+        "id": "76d0e999d583fceb",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1220,
+        "y": 2460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c5f8e00bc1a3d416",
+        "type": "http in",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Camera started",
+        "url": "/start",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 500,
+        "y": 460,
+        "wires": [
+            [
+                "5d0bda2f924d1847",
+                "43408be606fa472e"
+            ]
+        ]
+    },
+    {
+        "id": "5d0bda2f924d1847",
+        "type": "http response",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 720,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "43408be606fa472e",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Format message",
+        "func": "const response = JSON.parse(msg.payload);\n\nmsg.payload = {\n    \"chatId\": 5543128613,\n    \"type\": \"message\",\n    \"content\": response.message,\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 460,
+        "wires": [
+            [
+                "8a649a1f2dfac55e"
+            ]
+        ]
+    },
+    {
+        "id": "8a649a1f2dfac55e",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 960,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5ed2b2b98c831230",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Upload photo",
+        "func": "const type = msg.payload.type;\n\nif (type != \"photo\") return\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 2220,
+        "wires": [
+            [
+                "c2673f08ac09d489",
+                "c4f0ddde3841e602"
+            ]
+        ]
+    },
+    {
+        "id": "c2673f08ac09d489",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Check caption",
+        "func": "const caption = msg.payload.caption;\n\nif (caption == undefined) {\n    msg.payload = \"We need a name to be able to recognise the person love 😔😔\"\n} else {\n    msg.payload = `Looking good!👍\\nThe person's name is ${caption}.\\nPlease run /restart again to apply the changes.\n    `\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 2180,
+        "wires": [
+            [
+                "0cfee39ae65b1cff"
+            ]
+        ]
+    },
+    {
+        "id": "c4f0ddde3841e602",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Download photo",
+        "func": "const caption = msg.payload.caption;\n\nif (caption == undefined) {\n    return;\n}\n\nconst weblink = msg.payload.weblink;\nmsg.url = weblink;\nmsg.path = `/Users/leongzhecheng/Documents/CS460 Foundations of CPS/facerec/tmp/${caption}.jpg`\n\nreturn msg\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 990,
+        "y": 2300,
+        "wires": [
+            [
+                "1e6296df4af97359"
+            ]
+        ]
+    },
+    {
+        "id": "0cfee39ae65b1cff",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Format message",
+        "func": "const response = msg.payload;\n\nmsg.payload = {\n    \"chatId\": 5543128613,\n    \"type\": \"message\",\n    \"content\": response\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1210,
+        "y": 2180,
+        "wires": [
+            [
+                "622de0947e3b2211"
+            ]
+        ]
+    },
+    {
+        "id": "622de0947e3b2211",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1440,
+        "y": 2180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1e6296df4af97359",
+        "type": "http request",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Download image",
+        "method": "GET",
+        "ret": "bin",
+        "paytoqs": "body",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1230,
+        "y": 2300,
+        "wires": [
+            [
+                "3a621aa2073f6353"
+            ]
+        ]
+    },
+    {
+        "id": "3a621aa2073f6353",
+        "type": "file",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "filename": "path",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1420,
+        "y": 2300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8099eb9dd7bc55ef",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "List faces",
+        "func": "const command = msg.payload.content;\n\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (command != \"/list_faces\") return;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 1460,
+        "wires": [
+            [
+                "b8587ae5be4f0418"
+            ]
+        ]
+    },
+    {
+        "id": "b8587ae5be4f0418",
+        "type": "http request",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "List faces",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:30000/list_faces",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 980,
+        "y": 1460,
+        "wires": [
+            [
+                "6079099410200a77"
+            ]
+        ]
+    },
+    {
+        "id": "1cf76c2543c0d213",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "List new faces",
+        "func": "const command = msg.payload.content;\n\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (command != \"/list_new_faces\") return;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 1540,
+        "wires": [
+            [
+                "2fa1d1eb52885815"
+            ]
+        ]
+    },
+    {
+        "id": "2fa1d1eb52885815",
+        "type": "http request",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "List new faces",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:30000/list_new_faces",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1000,
+        "y": 1540,
+        "wires": [
+            [
+                "6079099410200a77"
+            ]
+        ]
+    },
+    {
+        "id": "07faeb67ce4b1ab4",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Delete face",
+        "func": "const command = msg.payload.content;\n\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (!command.includes(\"/delete\")) return;\n\nconst parts = command.split(\" \");\nconst name = parts.slice(1).join(\" \"); // joins everything after \"/delete\"\n\nconsole.log(name); // Output: \"jay oon\"\n\nmsg.payload = {\n    \"name\": \"asaa\"\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 1640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "31ad87ed84c16df8",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Restart",
+        "func": "const command = msg.payload.content;\n\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (command != \"/restart\") return;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 1740,
+        "wires": [
+            [
+                "513c0cd1accbb750"
+            ]
+        ]
+    },
+    {
+        "id": "513c0cd1accbb750",
+        "type": "http request",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Restart",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:30000/restart",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 980,
+        "y": 1740,
+        "wires": [
+            [
+                "6079099410200a77"
+            ]
+        ]
+    },
+    {
+        "id": "b0820f798ee42bb1",
+        "type": "http request",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Status",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:30000/status",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 970,
+        "y": 1840,
+        "wires": [
+            [
+                "6079099410200a77"
+            ]
+        ]
+    },
+    {
+        "id": "e44f6b8e050b8611",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Status",
+        "func": "const command = msg.payload.content;\n\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (command != \"/status\") return;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1840,
+        "wires": [
+            [
+                "b0820f798ee42bb1"
+            ]
+        ]
+    },
+    {
+        "id": "92b43d8b6d943db8",
+        "type": "http in",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "url": "/face_recognised",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 500,
+        "y": 80,
+        "wires": [
+            [
+                "df062a32423cead5",
+                "ca36038f0a0c5f2a"
+            ]
+        ]
+    },
+    {
+        "id": "df062a32423cead5",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Format message",
+        "func": "msg.payload = {\n    \"chatId\": 5543128613,\n    \"type\": \"message\",\n    \"content\": \"Ah, a friend of the house! 🏠\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 80,
+        "wires": [
+            [
+                "fadd4c01793193a0"
+            ]
+        ]
+    },
+    {
+        "id": "fadd4c01793193a0",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1040,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ca36038f0a0c5f2a",
+        "type": "http response",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 740,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "9b50663e11052502",
+        "type": "http in",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "url": "/motion_detected",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 520,
+        "y": 260,
+        "wires": [
+            [
+                "731ac6404b301581",
+                "4754bf5261e80afc"
+            ]
+        ]
+    },
+    {
+        "id": "731ac6404b301581",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Format message",
+        "func": "msg.payload = {\n    \"chatId\": 5543128613,\n    \"type\": \"message\",\n    \"content\": \"Motion detected! 💦 Could be trouble... 😈 or just a friend? 👯\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 260,
+        "wires": [
+            [
+                "ba94c98d3df3397c"
+            ]
+        ]
+    },
+    {
+        "id": "ba94c98d3df3397c",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1060,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4754bf5261e80afc",
+        "type": "http response",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 760,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "8496affe0277c46c",
+        "type": "mqtt out",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "topic": "g1g5.homeshield.levis.shopee",
+        "qos": "1",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "e2ac4a4e316315cb",
+        "x": 950,
+        "y": 3080,
+        "wires": []
+    },
+    {
+        "id": "e3154167e62a8d33",
+        "type": "inject",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 480,
+        "y": 3080,
+        "wires": [
+            [
+                "ce17dda641531194"
+            ]
+        ]
+    },
+    {
+        "id": "ce17dda641531194",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "motion detected",
+        "func": "msg.payload = \"motion\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 3080,
+        "wires": [
+            [
+                "8496affe0277c46c"
+            ]
+        ]
+    },
+    {
+        "id": "c2dd0a75afe41d84",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Cancel the alarm",
+        "func": "const command = msg.payload.content;\n\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (command != \"/cancel\") return;\n\nmsg.payload = \"cancel\"\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 2020,
+        "wires": [
+            [
+                "a786a4250727eec2"
+            ]
+        ]
+    },
+    {
+        "id": "a786a4250727eec2",
+        "type": "mqtt out",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "topic": "g1g5.homeshield.levis.shopee",
+        "qos": "1",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "e2ac4a4e316315cb",
+        "x": 1050,
+        "y": 2020,
+        "wires": []
+    },
+    {
+        "id": "d514051d0018e3a8",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Send photo",
+        "func": "const image_buffer = msg.payload;\n\nmsg.payload = { \n    \"chatId\": 5543128613, \n    \"type\": \"photo\", \n    \"content\": image_buffer\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 2100,
+        "wires": [
+            [
+                "034ccde3fd59045f"
+            ]
+        ]
+    },
+    {
+        "id": "034ccde3fd59045f",
+        "type": "telegram sender",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "",
+        "bot": "691e655ca2acf111",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1380,
+        "y": 2100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fe2891a959a3fb0c",
+        "type": "file in",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Read from path",
+        "filename": "/Users/leongzhecheng/Documents/CS460 Foundations of CPS/facerec/qr.jpg",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 980,
+        "y": 2100,
+        "wires": [
+            [
+                "d514051d0018e3a8"
+            ]
+        ]
+    },
+    {
+        "id": "2a05fc39584a4d0b",
+        "type": "function",
+        "z": "ff75dcc53d7ce5f3",
+        "name": "Cancel the alarm",
+        "func": "const command = msg.payload.content;\n\nconst type = msg.payload.type;\n\nif (type != \"message\") return;\nif (command != \"/generate_qr\") return;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 2100,
+        "wires": [
+            [
+                "fe2891a959a3fb0c"
+            ]
+        ]
+    },
+    {
+        "id": "691e655ca2acf111",
+        "type": "telegram bot",
+        "botname": "CS460 G1 Group 5 Home Shield",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "e2ac4a4e316315cb",
+        "type": "mqtt-broker",
+        "name": "cs460",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
