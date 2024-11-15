@@ -11,22 +11,35 @@ Before running the script, ensure you have the following:
 
 ## Setup Instructions
 
-1. **steps (if applicable)**
+1. **Install repo**
 
    If you haven't already, clone the repository to your local machine.
 
    ```bash
    git clone <repository-url>
    cd <repository-folder>
+   ```
 
-
-    python3 -m venv venv
+   python3 -m venv venv
 
     venv\Scripts\activate
 
     pip install -r requirements.txt
 
-    python src/motion_sensor_test.py
+2. **Run python scripts** (on raspiberry pi)
 
-    deactivate
-   ```
+      python src/motion_sensor_test.py
+
+
+3. **Telegram server** (on laptop)
+   
+   Terminal cmd: node-red
+   
+   Import the flows.json into node-red
+   
+4. **Facial regonition process** (on laptop)
+
+   python3 main.py
+
+   Start the process by sending /start to Telegram bot
+   
