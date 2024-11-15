@@ -62,7 +62,7 @@ def motion_sensor():
                 motion_detected = True
             else:
                 motion_detected = False
-            time.sleep(0.2)
+            time.sleep(0.5)
 
     except KeyboardInterrupt:
         print("Exiting program")

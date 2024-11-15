@@ -29,7 +29,7 @@ def start_process():
     
     return jsonify(
         {
-            "message": f"Home Shiled has started, will send a notification when it's fully operational!!!"
+            "message": f"🛡️ Home Shield 🛡️ is starting now, a notification will be sent when it's fully operational!!! Be patient love 🥰" 
         }
     ), 201
     
@@ -52,7 +52,7 @@ def stop_process():
     
     return jsonify(
         {
-            "message": f"Facial recognition process stopped at {formatted_datetime}, be aware of intruders!",
+            "message": f"🛡️ Home Shield 🛡 has stopped at {formatted_datetime}, be aware that your home is not safeguarded from intruders now 😈😈",
         }
     ), 202
     
@@ -61,7 +61,7 @@ def list_faces():
     if len(os.listdir("faces")) == 0:
         return jsonify({"message": f"There are no faces in your database love"}), 201
     
-    names = "The current registered faces are:\n"
+    names = "These faces are in the hall of fame yo 🥵🥵:\n"
     count = 1
     for image in os.listdir("faces"):
         names += f"{count}. {image.split(".")[0]}\n"
@@ -92,6 +92,8 @@ def list_new_faces():
 
 @app.post("/delete")
 def delete_face():
+
+    
     pass
 
 @app.post("/restart")
@@ -104,7 +106,7 @@ def restart():
     process.start_process()
     start_time = time.time()
     
-    return jsonify({"message": "Home Shiled has started, will send a notification when it's fully operational!!!"}), 400
+    return jsonify({"message": "Home Shield has started, will send a notification when it's fully operational!!!"}), 400
 
 @app.post("/status")
 def status():
@@ -119,30 +121,13 @@ def status():
     cur_time = time.time() 
     running_time = cur_time - start_time
     
-    response = f"Home Shield is up for {running_time} seconds!"
+    response = f"Home Shield is up for {int(running_time)} seconds!"
     if len(os.listdir("tmp")) != 0:
         response += f"""\n\nHowever, You have new faces (total of {len(os.listdir("tmp"))}) that is unregistered yet!\nSend in /list_new_faces to see their names or run /restart to apply them now love"""
     
     return jsonify(
         {
             "message": response
-        }
-    ), 201
-    
-@app.post("/take_photo")
-def take_photo():
-    global process
-    if not process:
-        return jsonify(
-            {
-                "message": PROCESS_NOT_RUNNING
-            }
-        ), 400
-    
-    process.request_photo() 
-    return jsonify(
-        {
-            "message": "Taking a photo now love",
         }
     ), 201
     

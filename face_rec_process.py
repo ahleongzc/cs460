@@ -10,11 +10,15 @@ import time
 import multiprocessing
 import datetime
 import shutil
+from pyzbar.pyzbar import decode
 import paho.mqtt.client as mqtt
-from music_player import alert
+from music_player import alert, motion, cancel, notify
 
 # 1 is for facecam, 0 is for iphone
-CAMERA = 1
+CAMERA = 0
+BROKER = "broker.hivemq.com"
+MQTT_TOPIC = "g1g5.homeshield.levis.shopee"
+
 
 class FaceRecognition:
     face_locations = []
@@ -39,8 +43,6 @@ class FaceRecognition:
         self.process.start()
         
     def end_process(self):
-        if not self.process:
-            return
         try: 
             self.process.terminate()
         except Exception as e:
@@ -61,59 +63,66 @@ class FaceRecognition:
         now = datetime.datetime.now()
         formatted_datetime = now.strftime("%Y-%m-%d %H:%M:%S") 
         body = {
-            "message": f"Home Shield has started with {len(os.listdir("faces"))} faces registered!\nThe current time is {formatted_datetime}"
+            "message": f"🛡️ Home Shield 🛡️ has started with {len(os.listdir("faces"))} faces registered!The current time is {formatted_datetime}"
         } 
         with requests.post(f"http://localhost:1880/start", data=json.dumps(body)) as response:
             pass
         
     def take_photo(self, cap):
-        _, frame = cap.read()
         time.sleep(1)
         _, frame = cap.read()
         cv2.imwrite('./image.jpg', frame)  # Change the filename as needed
     
-    def send_photo(self, reason="take_photo"):
+    def send_photo(self, reason):
         with requests.post(f"http://localhost:1880/{reason}") as response:
             pass
     
-    def request_photo(self):
-        new_camera = cv2.VideoCapture(CAMERA)
-        self.take_photo(new_camera)
-        self.send_photo()
-        new_camera.release()
+    def get_camera(self):
+        return self.camera
     
     def face_recognised(self):
+        cancel_thread = threading.Thread(target=cancel)
+        cancel_thread.start()
         with requests.post(f"http://localhost:1880/face_recognised") as response:
             pass
         
     def intruder_detected(self):
-        cap = cv2.VideoCapture(CAMERA)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        cap.set(cv2.CAP_PROP_FPS, 20)
-        
-        self.take_photo(cap)
         self.send_photo("intruder")
-        cap.release()
-        alert_thread = threading.Thread(target=alert)
-        alert_thread.start()
+        
+        countdown_thread = threading.Thread(target=notify)
+        countdown_thread.start()
+         
+        self.alarm = True
+        
+        for i in range(10):
+            print(f"Counting down towards the end to sound off alarm {i}")
+            time.sleep(1)
+            if not self.alarm:
+                self.face_recognised()
+                print("don't need to sound off alarm")
+                break
+       
+        if self.alarm: 
+            alert_thread = threading.Thread(target=alert)
+            alert_thread.start()
     
     def countdown(self, duration=5):
         send_to_telegram = True
         self.stop_event.clear()
         for i in range(duration, -1, -1):
-            print(i)
+            print(f"This is the countdown for recognising, time left is {i}")
             time.sleep(1)
             if self.stop_event.is_set():
                 send_to_telegram = False
                 self.motion_detected_flag = False
                 self.face_recognised()
                 break
+            
         if not send_to_telegram:
             return 
+        
         self.intruder_detected()
         self.motion_detected_flag = False
-        
 
     def encode_faces(self):
         for image in os.listdir("faces"):
@@ -126,56 +135,57 @@ class FaceRecognition:
         print(self.known_face_names)
     
     def start_countdown(self):
-        if self.countdown_thread is None or not self.countdown_thread.is_alive():
-            self.countdown_thread = threading.Thread(
-                target=self.countdown)
-            self.countdown_thread.start()
+        if self.recognise_countdown_thread is None or not self.recognise_countdown_thread.is_alive():
+            self.recognise_countdown_thread = threading.Thread(target=self.countdown)
+            self.recognise_countdown_thread.start()
             
-    def motion(self):
-        # with requests.post(f"http://localhost:1880/motion_detected") as response:
-        #     pass
-        print("MOTION HAS BEEN CALLED") 
-        self.motion_detected_flag = True
-        
     def start_mqtt_subscriber(self):
-        broker = "localhost" 
+        broker = BROKER
         port = 1883
-        
         client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-
-        def on_connect(client, userdata, flags, reason_code, properties):
-            client.subscribe("motion")
+        
+        def on_connect(client, userdata, flags, reason_code, properties): 
+            client.subscribe(MQTT_TOPIC)
+            self.notify_camera() 
+            print("connected to MQTT")
         
         def on_message(client, userdata, msg):
-            with requests.post(f"http://localhost:1880/motion_detected") as response:
-                pass
-            self.motion_detected_flag = True
+            print("Motion detected")
+            message = msg.payload.decode('utf-8')
+            if message == "cancel":
+                self.alarm = False
+                self.motion_detected_flag = False
+            elif message == "motion":
+                print(f"The motion detected flag is {self.motion_detected_flag}")
+                if not self.motion_detected_flag:
+                    with requests.post(f"http://localhost:1880/motion_detected") as response:
+                        pass
+                    self.motion_detected_flag = True
         
         client.on_connect = on_connect 
         client.on_message = on_message 
-        
         client.connect(broker, port) 
-        
-        test = threading.Thread(
-            target=client.loop_forever
-        )
-        
+        test = threading.Thread(target=client.loop_forever)
         test.start()
         
-
+        
     def run_recognition(self):
+        # Subsribe to the MQTT topic first 
+        self.start_mqtt_subscriber()
+                
         cap = cv2.VideoCapture(CAMERA)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
         cap.set(cv2.CAP_PROP_FPS, 20)
         
-        self.start_mqtt_subscriber()
+        self.camera = cap
         
-        self.notify_camera() 
         self.encode_faces()
+        
         self.stop_event = threading.Event()
-        self.countdown_thread = None
+        self.recognise_countdown_thread = None
         self.motion_detected_flag = False
+        self.alarm = None
     
         while True:
             ret, frame = cap.read()
@@ -208,8 +218,9 @@ class FaceRecognition:
                     self.face_names.append(f"{name} ({confidence})")
                 
                 if registered_faces:
-                    if self.countdown_thread and self.countdown_thread.is_alive():
+                    if self.recognise_countdown_thread and self.recognise_countdown_thread.is_alive():    
                         self.stop_event.set()
+                    self.alarm = False
                      
             self.process_current_frame = not self.process_current_frame
 
@@ -218,33 +229,33 @@ class FaceRecognition:
                 right *= 4
                 bottom *= 4
                 left *= 4
-
-                cv2.rectangle(frame, (left, top),
-                              (right, bottom), (0, 0, 255), 2)
-                cv2.rectangle(frame, (left, bottom - 35),
-                              (right, bottom), (0, 0, 255), -1)
-                cv2.putText(frame, name, (left + 6, bottom - 6),
-                            cv2.FONT_HERSHEY_DUPLEX, 0.8, (255, 255, 255), 1)
-
+                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), -1)
+                cv2.putText(frame, name, (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255, 255, 255), 1)
+            
             cv2.imshow("Face recognition", frame)
 
             key = cv2.waitKey(1) & 0xFF
             
-            # print(f"motion detected {self.motion_detected_flag}")
-            
             if self.motion_detected_flag:
-                if self.countdown_thread is None or not self.countdown_thread.is_alive():
-                    self.countdown_thread = threading.Thread(
-                        target=self.countdown)
-                    self.countdown_thread.start()
+                for barcode in decode(frame):
+                    data = barcode.data.decode("utf8")
+                    if data == "cancel":
+                        self.motion_detected_flag = False
+                        self.alarm = False
+                        if self.recognise_countdown_thread and self.recognise_countdown_thread.is_alive():
+                            self.stop_event.set()
+                        
+                if self.motion_detected_flag and (self.recognise_countdown_thread is None or not self.recognise_countdown_thread.is_alive()):
+                    self.take_photo(cap)
+                    motion_thread = threading.Thread(target=motion)
+                    motion_thread.start()
+                    self.recognise_countdown_thread = threading.Thread(target=self.countdown)
+                    self.recognise_countdown_thread.start()
 
             if key == ord("q"):
                 self.stop_event.set()
                 break
-            elif key == ord("a"):
-                self.motion()
-            elif key == ord("b"):
-                self.stop_event.set()
 
         cap.release()
         cv2.destroyAllWindows()
